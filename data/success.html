@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Darya Nails — Заявка отправлена</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#B0204F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%85%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Manrope:wght@400;500;600&subset=cyrillic,latin&display=swap" rel="stylesheet">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("dnTheme2")||"dark"}catch(e){}</script>
+<link rel="stylesheet" href="base.css?v=20261017">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="loader.css">
+<link rel="stylesheet" href="success.css">
+<link rel="stylesheet" href="mobile.css?v=20261017">
+</head>
+<body data-page="success" data-title="title.ok">
+<div id="boot" role="status" aria-live="polite"><div class="boot-in"><div class="boot-logo">Darya<i>Nails</i></div><div class="boot-bar"><i></i></div><p id="bootp"></p><button class="btn o sm" type="button" onclick="location.reload()" id="bootb"></button></div></div>
+<script>(function(){var ru=true;try{ru=(localStorage.getItem("dnLang")||"ru")!=="en"}catch(e){}
+var p=document.getElementById("bootp"),b=document.getElementById("bootb"),n=document.getElementById("boot");
+if(b)b.textContent=ru?"Обновить страницу":"Reload page";
+setTimeout(function(){if(p&&document.getElementById("boot")){p.textContent=ru?"Загружаем… ещё секунду":"Loading… just a moment";p.className="show"}},1800);
+setTimeout(function(){var e=document.getElementById("boot");if(e)e.classList.add("slow")},7000);
+setTimeout(function(){var e=document.getElementById("boot");if(e)e.remove()},15000)})();</script>
+<!-- same pink veil the home page fades in with -> the two pages feel like one continuous move -->
+<div class="curtain arrive" id="arrive" aria-hidden="true"><span>Darya Nails</span></div>
+<script>
+(function(){
+  var c=document.getElementById("arrive");
+  function rm(){if(c&&c.parentNode)c.remove()}
+  c.addEventListener("animationend",function(e){if(e.target===c)rm()});
+  setTimeout(function(){document.body.classList.add("ready");rm()},6000);   /* safety net */
+})();
+</script>
+<header id="hd"></header>
+
+<main id="top">
+  <div class="ok-fx" id="okfx" aria-hidden="true"></div>
+  <section class="ok-wrap">
+    <div class="ok-head">
+      <div class="ok-badge" aria-hidden="true"><i class="ok-pulse"></i><i class="ok-pulse p2"></i>
+        <svg viewBox="0 0 52 52" width="64" height="64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle class="ok-ring" cx="26" cy="26" r="23"/>
+          <path class="ok-tick" d="M15 27l8 8 14-16"/>
+        </svg>
+      </div>
+      <p class="ok-no" id="okno" hidden></p>
+      <h1 data-i18n="ok.h"></h1>
+      <p class="ok-lead" id="oktext"></p>
+    </div>
+
+    <div class="cardx ok-card" id="okcard" hidden>
+      <dl class="ok-list" id="oklist"></dl>
+    </div>
+
+    <div class="cardx ok-steps">
+      <h2 data-i18n="ok.next"></h2>
+      <ol class="ok-tl">
+        <li><i>1</i><span data-i18n="ok.s1"></span></li>
+        <li><i>2</i><span id="oks2" data-i18n="ok.s2"></span></li>
+        <li><i>3</i><span data-i18n="ok.s3"></span></li>
+      </ol>
+    </div>
+
+    <div class="ok-actions">
+      <a class="btn" id="okwa" href="#" target="_blank" rel="noopener" data-i18n="ok.wa"></a>
+      <button class="btn o" id="okcal" type="button" data-i18n="ok.cal" hidden></button>
+      <a class="btn o" id="okmap" href="#" target="_blank" rel="noopener" data-i18n="ok.map"></a>
+    </div>
+    <div class="ok-links">
+      <a href="index.html" data-i18n="ok.home"></a>
+      <span aria-hidden="true">·</span>
+      <a href="index.html#book" data-i18n="ok.again"></a>
+    </div>
+  </section>
+</main>
+
+<footer id="ft"></footer>
+<script type="module" src="common.js"></script>
+<script type="module" src="success.js"></script>
+</body>
+</html>
