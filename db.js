@@ -1,49 +1,70 @@
-// db.js — Local PHP version (All data lives in files on the hosting via api.php)
+// db.js — frontend on GitHub Pages, backend (api.php) on Sprinthost
 
-const API = '/api.php';
+const BACKEND = 'https://daryanails.xsph.ru';
 
-// دالة مساعدة لإرسال الطلبات إلى api.php
+// On github.io we talk to the Sprinthost server; on Sprinthost itself (or localhost) paths stay relative.
+const REMOTE = /(^|\.)github\.io$/.test(location.hostname);
+const BASE = REMOTE ? BACKEND : '';
+const API = BASE + '/api.php';
+const UP = '/uploads/';
+
+// api.php stores photos as "/uploads/..." — on GitHub Pages they must point to the Sprinthost server.
+// abs(): server -> page (add the host), rel(): page -> server (remove it again before saving).
+function abs(v) {
+  if (!BASE) return v;
+  if (typeof v === 'string') return v.startsWith(UP) ? BASE + v : v;
+  if (Array.isArray(v)) return v.map(abs);
+  if (v && typeof v === 'object') { const o = {}; for (const k in v) o[k] = abs(v[k]); return o; }
+  return v;
+}
+function rel(v) {
+  if (!BASE) return v;
+  const p = BASE + UP;
+  if (typeof v === 'string') return v.startsWith(p) ? v.slice(BASE.length) : v;
+  if (Array.isArray(v)) return v.map(rel);
+  if (v && typeof v === 'object') { const o = {}; for (const k in v) o[k] = rel(v[k]); return o; }
+  return v;
+}
+
+async function parse(res) {
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || json.ok === false) {
+    const err = new Error(json.error || 'Network error');
+    err.status = res.status;
+    throw err;
+  }
+  return abs(json);
+}
+
+// POST (JSON, or FormData when isForm = true)
 async function call(action, data = {}, isForm = false) {
-  const headers = { 'X-DN': '1' }; // مطلوب في api.php لمنع هجمات CSRF
-  
+  const headers = { 'X-DN': '1' };            // required by api.php (CSRF guard)
   let body;
   if (isForm) {
-    body = data; // FormData
+    body = data;                              // FormData: the browser sets the Content-Type itself
   } else {
     headers['Content-Type'] = 'application/json';
-    body = JSON.stringify(data);
+    body = JSON.stringify(rel(data));
   }
-
   const res = await fetch(`${API}?a=${action}`, {
     method: 'POST',
-    headers: headers,
-    body: body
+    headers,
+    body,
+    credentials: 'include'                    // admin session cookie
   });
-
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || json.ok === false) {
-    const err = new Error(json.error || 'Network error');
-    err.status = res.status;
-    throw err;
-  }
-  return json;
+  return parse(res);
 }
 
-// دالة مساعدة للطلبات من نوع GET
+// GET
 async function getCall(action) {
   const res = await fetch(`${API}?a=${action}`, {
-    headers: { 'X-DN': '1' }
+    headers: { 'X-DN': '1' },
+    credentials: 'include'
   });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || json.ok === false) {
-    const err = new Error(json.error || 'Network error');
-    err.status = res.status;
-    throw err;
-  }
-  return json;
+  return parse(res);
 }
 
-// جلب البيانات للوحة التحكم (يتطلب تسجيل دخول)
+// Dashboard data (login required)
 export async function fetchAll() {
   try {
     const json = await getCall('all');
@@ -61,7 +82,7 @@ export async function fetchAll() {
   }
 }
 
-// جلب البيانات للزوار (الموقع العام)
+// Public site data
 export async function fetchPublic() {
   try {
     const json = await getCall('public');
@@ -78,7 +99,7 @@ export async function fetchPublic() {
   }
 }
 
-// إنشاء حجز جديد من الموقع
+// New booking from the website
 export async function createBooking(p) {
   const json = await call('create_booking', {
     name: p.name,
@@ -92,7 +113,7 @@ export async function createBooking(p) {
   return json.id;
 }
 
-// حفظ البيانات (عملاء، حجوزات، خدمات، أعمال)
+// Save / delete (clients, bookings, services, works)
 export async function saveClient(c) { return call('save', { t: 'clients', row: c }).then(r => r.row); }
 export const deleteClient = id => call('delete', { t: 'clients', id });
 
@@ -114,7 +135,7 @@ export async function saveSite(data) {
   }
 }
 
-// رفع الصور
+// Photo upload
 export async function uploadPhoto(file, folder = 'misc') {
   try {
     const fd = new FormData();
@@ -128,19 +149,15 @@ export async function uploadPhoto(file, folder = 'misc') {
   }
 }
 
-// نظام تسجيل الدخول والإدارة
+// Admin sign-in & accounts
 export const auth = {
   session: async () => {
-    try { const json = await getCall('me'); return json.user; } 
+    try { const json = await getCall('me'); return json.user; }
     catch (e) { return null; }
   },
   login: async (email, pass) => {
-    try {
-      const json = await call('login', { email, pass });
-      return json.user;
-    } catch (e) {
-      throw e;
-    }
+    const json = await call('login', { email, pass });
+    return json.user;
   },
   logout: async () => { try { await call('logout'); } catch (e) { } },
   setup: async (email, pass) => {

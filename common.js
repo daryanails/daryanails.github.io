@@ -11,7 +11,7 @@ const root = document.documentElement;
 const PAGE = document.body.dataset.page || "home";
 /* ---------- Clean URLs: /pedicure  /gallery  /book  (no index.html, no #hash) ----------
    Works on the real site (needs the .htaccess). On localhost / file:// everything stays as before. */
-const CLEAN = location.protocol.startsWith("http") && !/^(localhost|127\.|0\.0\.0\.0|\[::1\])/.test(location.hostname);
+const CLEAN = /(^|\.)daryanails\.xsph\.ru$/.test(location.hostname);   // clean URLs need the .htaccess on Sprinthost; GitHub Pages uses real .html files
 const SEC = { top: "", services: "manicure", pedicure: "pedicure", treatment: "treatment", works: "works", about: "about", book: "book" };
 const SEC_ID = Object.fromEntries(Object.entries(SEC).filter(([, p]) => p).map(([id, p]) => [p, id]));
 const pg = n => CLEAN ? "/" + n : n + ".html";                                              // other pages: gallery, success…
