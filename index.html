@@ -165,6 +165,12 @@
 <dialog id="lb"><img id="lbi" alt=""></dialog>
 <footer id="ft"></footer>
 <script type="module" src="common.js"></script>   
+  <script>
+    fetch('https://daryanails.xsph.ru/api.php')
+        .then(response => response.json())
+        .then(data => console.log("تم الاتصال:", data))
+        .catch(error => console.error("خطأ في الاتصال:", error));
+</script>
 <script type="module" src="script.js?v=20261017"></script>   
 
 </body>
