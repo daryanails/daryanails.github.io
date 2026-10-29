@@ -1,0 +1,40 @@
+/* bg3d.css — the 3D silk canvas is a TRUE backdrop behind every page */
+
+/* page gradients live on <html> (fallback while the canvas loads / if WebGL is missing) */
+html[data-theme=light]{background:
+  radial-gradient(900px 560px at 88% -4%,rgba(238,170,196,.34),transparent 62%),
+  radial-gradient(780px 560px at -6% 44%,rgba(206,170,220,.20),transparent 62%),
+  radial-gradient(700px 480px at 60% 108%,rgba(238,186,204,.18),transparent 60%),var(--bg);
+  background-attachment:fixed}
+html[data-theme=dark]{background:
+  radial-gradient(900px 560px at 88% -4%,rgba(232,120,154,.12),transparent 62%),
+  radial-gradient(780px 560px at -6% 44%,rgba(150,100,190,.10),transparent 62%),
+  radial-gradient(700px 480px at 60% 108%,rgba(232,120,154,.07),transparent 60%),var(--bg);
+  background-attachment:fixed}
+
+/* body must be see-through so the canvas behind it is visible */
+html[data-theme] body{background:none!important}
+
+#bg3d{position:fixed!important;inset:0;width:100%;height:100%;z-index:-1!important;pointer-events:none;
+  opacity:0;transition:opacity 1.2s ease}
+#bg3d.on{opacity:var(--bg3d-o,1)}
+
+@media print{#bg3d{display:none}}
+
+/* No pink glow under the mouse: style.css paints a radial gradient at var(--mx,--my) on .hero — switch it off */
+.hero{background:none!important;overflow:visible!important;isolation:auto!important}
+/* style.css adds two blurred pink/purple blobs inside .hero and clips them with overflow:hidden → a hard-edged lighter rectangle.
+   Remove them so the whole page shares ONE seamless background. */
+.hero::before,.hero::after{display:none!important}
+
+/* ==========================================================
+   Hero: text on the LEFT, the 3D beauty showcase floats on the RIGHT (drawn by bg3d.js)
+   ========================================================== */
+@media(min-width:861px){
+  .hero{justify-content:flex-start;min-height:min(80vh,780px)}
+  .hero .hero-t{max-width:min(660px,56%)}
+}
+
+/* Smooth page changes: the header was its own named transition layer and slid/glitched while the next page loaded.
+   Let the whole page cross-fade as ONE layer instead. */
+header.site{view-transition-name:none!important}
